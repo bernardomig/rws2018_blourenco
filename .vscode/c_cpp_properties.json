@@ -7,7 +7,7 @@
                 "path": [
                     "/home/bl/catkin_ws/devel/include",
                     "/opt/ros/kinetic/include",
-                    "/home/bl/catkin_ws/src/rws2018/rws2018_blourenco/player_mlourenco/include",
+                    "/home/bl/catkin_ws/src/rws2018/rws2018_blourenco/player_blourenco/include",
                     "/home/bl/catkin_ws/src/rws2018/rws2018_moliveira/rws2018_libs/include",
                     "/usr/include"
                 ]
@@ -15,7 +15,7 @@
             "includePath": [
                 "/home/bl/catkin_ws/devel/include",
                 "/opt/ros/kinetic/include",
-                "/home/bl/catkin_ws/src/rws2018/rws2018_blourenco/player_mlourenco/include",
+                "/home/bl/catkin_ws/src/rws2018/rws2018_blourenco/player_blourenco/include",
                 "/home/bl/catkin_ws/src/rws2018/rws2018_moliveira/rws2018_libs/include",
                 "/usr/include"
             ],

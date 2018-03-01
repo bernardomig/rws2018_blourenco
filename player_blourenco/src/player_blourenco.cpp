@@ -12,20 +12,19 @@
 
 #include "rws2018_libs/team.h"
 
-tf::TransformBroadcaster br;
-
 int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "blourenco");
 
   auto nh = ros::NodeHandle{};
 
-  auto transform = tf::Transform{};
-
   auto rate = ros::Rate{ 10 };
+
+  tf::TransformBroadcaster br;
 
   while (ros::ok())
   {
+    auto transform = tf::Transform{};
     transform.setOrigin(tf::Vector3{ 7, 7, 0 });
     auto q = tf::Quaternion{};
     q.setRPY(0, 0, M_PI / 2);

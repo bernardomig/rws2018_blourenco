@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>player_mlourenco</name>
+  <name>player_blourenco</name>
   <version>0.0.0</version>
-  <description>The player_mlourenco package</description>
+  <description>The player_blourenco package</description>
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
