@@ -8,6 +8,8 @@
 #include "player_blourenco/team.hpp"
 #include "player_blourenco/teamcolor.hpp"
 
+#include "rws2018_libs/team.h"
+
 int main(int argc, char* argv[])
 {
   return 0;
