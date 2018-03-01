@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   rws2018_libs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -133,13 +134,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(player_blourenco
+add_executable(player_blourenco_node
   src/player_blourenco.cpp
   src/teamcolor.cpp
   src/player.cpp
   src/team.cpp)
 
-target_link_libraries(player_blourenco
+target_link_libraries(player_blourenco_node
   ${catkin_LIBRARIES}
 )
 
