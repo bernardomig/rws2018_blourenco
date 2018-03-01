@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+
+cat << EOF
+      ___           ___           ___                                               
+     /\  \         /\__\         /\  \                                              
+    /::\  \       /:/ _/_       /::\  \                                             
+   /:/\:\  \     /:/ /\__\     /:/\ \  \                                            
+  /::\~\:\  \   /:/ /:/ _/_   _\:\~\ \  \                                           
+ /:/\:\ \:\__\ /:/_/:/ /\__\ /\ \:\ \ \__\                                          
+ \/_|::\/:/  / \:\/:/ /:/  / \:\ \:\ \/__/                                          
+    |:|::/  /   \::/_/:/  /   \:\ \:\__\                                            
+    |:|\/__/     \:\/:/  /     \:\/:/  /                                            
+    |:|  |        \::/  /       \::/  /                                             
+     \|__|         \/__/         \/__/                                              
+      ___           ___           ___           ___           ___           ___     
+     /\__\         /\  \         /\  \         /\  \         /\  \         /\  \    
+    /:/  /        /::\  \       /::\  \       /::\  \        \:\  \       /::\  \   
+   /:/  /        /:/\:\  \     /:/\:\  \     /:/\:\  \        \:\  \     /:/\:\  \  
+  /:/  /  ___   /::\~\:\  \   /:/  \:\__\   /::\~\:\  \       /::\  \   /::\~\:\  \ 
+ /:/__/  /\__\ /:/\:\ \:\__\ /:/__/ \:|__| /:/\:\ \:\__\     /:/\:\__\ /:/\:\ \:\__\ 
+ \:\  \ /:/  / \/__\:\/:/  / \:\  \ /:/  / \/__\:\/:/  /    /:/  \/__/ \:\~\:\ \/__/ 
+  \:\  /:/  /       \::/  /   \:\  /:/  /       \::/  /    /:/  /       \:\ \:\__\  
+   \:\/:/  /         \/__/     \:\/:/  /        /:/  /     \/__/         \:\ \/__/  
+    \::/  /                     \::/__/        /:/  /                     \:\__\    
+     \/__/                       ~~            \/__/                       \/__/    
+
+EOF
+
+repositories=(
+    # team red
+    "https://github.com/miguelriemoliveira/rws2018_moliveira"
+    "https://github.com/lpes34/rws2018_lsarmento"
+    "https://github.com/bernardomig/rws2018_blourenco"
+    "https://github.com/JoanaMota/rws2018_jmota"
+    # team green
+    "https://github.com/ricardolfsilva/rws2018_rsilva"
+    "https://github.com/TiagoSMarques/rws2018_tmarques"
+    "https://github.com/pedroboucanova/rws2018_pboucanova"
+    "https://github.com/FilipeOCosta/rws2018_filipecosta"
+    "https://github.com/tomassosorio/rws2018_tosorio"
+    # team blue
+    "https://github.com/arcmmartins/rws2018_amartins"
+    "https://github.com/RFRE/rws2018_resteves"
+    "https://github.com/nmssilva/rws2018_nsilva"
+    "https://github.com/jgnrodrigues/rws2018_jrodrigues"
+    "https://github.com/sofiamsantos/rws2018_ssantos"
+)
+
+for repository in ${repositories[*]}
+do
+    repdir=$(basename $repository)
+    
+    if ! [[ -e $repdir ]]
+    then 
+        git clone $repository &> /dev/null &
+        printf "#"
+    else
+        (cd $repdir; git pull) &> /dev/null  &
+        printf "."
+    fi
+
+done
+
+wait
+
+printf '\n'
