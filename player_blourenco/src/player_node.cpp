@@ -27,7 +27,7 @@ void PlayerNode::start()
 void PlayerNode::updatePosition()
 {
   auto t = tf::StampedTransform{};
-  if (!findOtherPlayer("fcosta", t))
+  if (!findOtherPlayer("rsilva", t))
   {
     return;
   }
