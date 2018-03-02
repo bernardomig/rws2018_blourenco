@@ -6,11 +6,6 @@ PlayerNode::PlayerNode(std::string name) : _name(name)
   _nh.getParam("/team_blue", _teams.blue);
   _nh.getParam("/team_red", _teams.red);
   _nh.getParam("/team_green", _teams.green);
-
-  auto blue_team =
-      std::accumulate(_teams.blue.begin(), _teams.blue.end(), ""s, [](auto a, auto b) { return a + " " + b; });
-
-  ROS_INFO("blue_team: %s", blue_team.c_str());
 }
 
 void PlayerNode::start()
@@ -59,15 +54,13 @@ void PlayerNode::publishMarker()
   marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
   marker.action = visualization_msgs::Marker::ADD;
 
-  marker.scale.x = 0.5;
-  marker.scale.y = 0.5;
-  marker.scale.z = 0.5;
+  marker.scale.z = 0.4;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 0.0;
   marker.color.b = 1.0;
 
-  marker.text = "Hallo";
+  marker.text = piadas_secas[(piada_id++ / 50) % piadas_secas.size()];
 
   _marker_pub.publish(marker);
 }
