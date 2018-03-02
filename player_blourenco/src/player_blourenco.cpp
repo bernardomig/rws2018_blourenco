@@ -7,8 +7,6 @@
 #include <tf/transform_broadcaster.h>
 
 #include "player_blourenco/player.hpp"
-#include "player_blourenco/team.hpp"
-#include "player_blourenco/teamcolor.hpp"
 
 #include "rws2018_libs/team.h"
 
@@ -32,6 +30,8 @@ int main(int argc, char* argv[])
     br.sendTransform(tf::StampedTransform{ transform, ros::Time::now(), "world", "blourenco" });
     rate.sleep();
     ros::spinOnce();
+
+    ROS_INFO("I'm blourenco and my team is team_read");
   }
 
   return 0;

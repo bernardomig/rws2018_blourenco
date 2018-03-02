@@ -1,23 +1,23 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "player_blourenco/player.hpp"
-#include "player_blourenco/teamcolor.hpp"
+#include <iostream>
+#include <string>
 
 namespace rws
 {
 class Player
 {
 public:
-  Player(std::string name, TeamColor team = TeamColor::BLUE);
+  Player(std::string name, std::string team);
 
   std::string& name();
 
-  TeamColor& team_name();
+  std::string& team_name();
 
 private:
   std::string _name;
-  TeamColor _team_name;
+  std::string _team_name;
 };
 }
 

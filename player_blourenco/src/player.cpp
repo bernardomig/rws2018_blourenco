@@ -2,14 +2,14 @@
 
 namespace rws
 {
-Player::Player(std::string name, TeamColor team) : _name(name), _team_name(team)
+Player::Player(std::string name, std::string team) : _name(name), _team_name(team)
 {
 }
 std::string& Player::name()
 {
   return _name;
 }
-TeamColor& Player::team_name()
+std::string& Player::team_name()
 {
   return _team_name;
 }
