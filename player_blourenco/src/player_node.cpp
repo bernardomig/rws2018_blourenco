@@ -23,9 +23,10 @@ void PlayerNode::start()
   _marker_pub = _nh.advertise<visualization_msgs::Marker>("/bocas", 1);
 }
 
-void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
+void PlayerNode::updatePosition()
 {
-  auto max_speed = msg->cheetah;
+  auto t = tf::StampedTransform{};
+  findOtherPlayer("lsarmento", t);
 
   auto delta = tf::Transform{};
 
@@ -35,6 +36,29 @@ void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
   delta.setRotation(q);
 
   _position *= delta;
+}
+
+bool PlayerNode::findOtherPlayer(std::string player_name, tf::StampedTransform& transform)
+{
+  static tf::TransformListener _listener;
+
+  try
+  {
+    _listener.lookupTransform(player_name, _name, ros::Time(0), transform);
+    return true;
+  }
+  catch (tf::LookupException& ex)
+  {
+    ROS_ERROR("didn't found %s: %s", player_name.c_str(), ex.what());
+    return false;
+  }
+}
+
+void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
+{
+  max_speed = msg->cheetah;
+
+  updatePosition();
 
   publishPosition();
   publishMarker();
@@ -54,23 +78,22 @@ void PlayerNode::publishMarker()
   marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
   marker.action = visualization_msgs::Marker::ADD;
 
-  marker.scale.z = 0.4;
+  marker.scale.z = 0.3;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 0.0;
   marker.color.b = 1.0;
 
-  marker.text = piadas_secas[(piada_id++ / 50) % piadas_secas.size()];
+  //   marker.text = piadas_secas[(piada_id++ / 50) % piadas_secas.size()];
+  marker.text = "here I go";
 
   _marker_pub.publish(marker);
 }
 
 float PlayerNode::randomPosition()
 {
-  using namespace std::chrono_literals;
-
   auto now = std::chrono::system_clock::now();
-  auto seed = now.time_since_epoch() / 1us;
+  auto seed = now.time_since_epoch() / std::chrono::microseconds(1);
 
   auto generator = std::default_random_engine{ seed };
   auto distribution = std::uniform_real_distribution<float>{ -5.0f, 5.0f };

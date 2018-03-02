@@ -5,10 +5,9 @@
 #include <chrono>
 #include <random>
 
-using namespace std::literals;
-
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 
 #include <visualization_msgs/Marker.h>
 
@@ -22,6 +21,9 @@ public:
   void start();
 
 protected:
+  void updatePosition();
+  bool findOtherPlayer(std::string, tf::StampedTransform&);
+
   void makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg);
 
   void publishPosition();
@@ -36,6 +38,10 @@ private:
   tf::TransformBroadcaster _br;
   ros::Subscriber _make_a_move_sub;
   tf::Transform _position;
+
+  float max_speed;
+
+  // garbage, plz remove
   struct
   {
     std::vector<std::string> red, green, blue;
