@@ -44,9 +44,9 @@ private:
   std::vector<std::string> piadas_secas = { "O que diz o hidrogenio quando vai para a esquadra?\n- Tenho direito a uma "
                                             "ligacao?",
                                             "Os humanos sao seres de habitos,\nespecialmente os monges.",
-                                            "O que e que um tubarão diz para o outro?\n- Tubaralhas-me.",
+                                            "O que e que um tubarao diz para o outro?\n- Tubaralhas-me.",
                                             "O que e que a galinha foi fazer na igreja?\n-Assistir a Missa do Galo.",
-                                            "Para que servem óculos verdes?\n- Para verde perto." };
+                                            "Para que servem oculos verdes?\n- Para verde perto." };
   int piada_id = 0;
 };
 
