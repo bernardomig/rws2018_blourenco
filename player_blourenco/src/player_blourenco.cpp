@@ -8,9 +8,11 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "blourenco");
 
-  auto player = PlayerNode{ "blourenco" };
+  PlayerNode player("blourenco");
+  // this does not work, why?
+  // auto player = PlayerNode("blourenco");
 
-  player.start();
+  // player.start();
 
   ros::spin();
 
