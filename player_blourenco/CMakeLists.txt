@@ -137,8 +137,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(player_blourenco_node
   src/player_blourenco.cpp
-  src/player_node.cpp
-  src/player.cpp)
+  src/player_node.cpp)
 
 target_link_libraries(player_blourenco_node
   ${catkin_LIBRARIES}

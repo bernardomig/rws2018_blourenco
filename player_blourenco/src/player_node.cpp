@@ -6,24 +6,47 @@ PlayerNode::PlayerNode(std::string name) : _name(name)
 
 void PlayerNode::start()
 {
+  float x = randomPosition();
+  float y = randomPosition();
+  _position.setOrigin(tf::Vector3{ x, y, 0 });
+  auto q = tf::Quaternion{};
+  q.setRPY(0, 0, 0);
+  _position.setRotation(q);
+
+  publishPosition();
   _make_a_move_sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 10, &PlayerNode::makeAPlay, this);
 }
 
 void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
 {
-  updatePosition(4 * std::cos(_a), 2 * std::sin(_a), _a);
+  auto max_speed = msg->cheetah;
 
-  _a += 0.1;
+  auto delta = tf::Transform{};
 
-  ROS_INFO("I'm %s and I am a moon (~_~;)", _name.c_str());
+  delta.setOrigin(tf::Vector3{ 0.1, 0, 0 });
+  auto q = tf::Quaternion{};
+  q.setRPY(0, 0, 0.1);
+  delta.setRotation(q);
+
+  _position *= delta;
+
+  publishPosition();
 }
 
-void PlayerNode::updatePosition(float x, float y, float a)
+void PlayerNode::publishPosition()
 {
-  auto transform = tf::Transform{};
-  transform.setOrigin(tf::Vector3{ 4 * std::cos(a), 2 * std::sin(a), 0 });
-  auto q = tf::Quaternion{};
-  q.setRPY(0, 0, a);
-  transform.setRotation(q);
-  _br.sendTransform(tf::StampedTransform{ transform, ros::Time::now(), "world", _name });
+  _br.sendTransform(tf::StampedTransform{ _position, ros::Time::now(), "world", _name });
+}
+
+float PlayerNode::randomPosition()
+{
+  using namespace std::chrono_literals;
+
+  auto now = std::chrono::system_clock::now();
+  auto seed = now.time_since_epoch() / 1us;
+
+  auto generator = std::default_random_engine{ seed };
+  auto distribution = std::uniform_real_distribution<float>{ -5.0f, 5.0f };
+
+  return distribution(generator);
 }

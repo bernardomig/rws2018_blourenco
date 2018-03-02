@@ -1,6 +1,9 @@
 #ifndef _PLAYER_NODE_HPP
 #define _PLAYER_NODE_HPP
 
+#include <chrono>
+#include <random>
+
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 
@@ -16,14 +19,16 @@ public:
 protected:
   void makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg);
 
-  void updatePosition(float x, float y, float a);
+  void publishPosition();
+
+  float randomPosition();
 
 private:
   std::string _name;
   ros::NodeHandle _nh;
   tf::TransformBroadcaster _br;
   ros::Subscriber _make_a_move_sub;
-  float _a = 0.0f;
+  tf::Transform _position;
 };
 
 #endif
