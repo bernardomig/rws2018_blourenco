@@ -10,8 +10,9 @@ add_compile_options(-std=c++1z)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  rws2018_libs
   tf
+  rws2018_libs
+  rws2018_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -136,6 +137,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(player_blourenco_node
   src/player_blourenco.cpp
+  src/player_node.cpp
   src/player.cpp)
 
 target_link_libraries(player_blourenco_node
