@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "player_blourenco/player_node.hpp"
+#include "player_blourenco/player.hpp"
 
 #include <tf/transform_listener.h>
 
@@ -8,13 +8,9 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "blourenco");
 
-  PlayerNode player("blourenco");
-  // this does not work, why?
-  // auto player = PlayerNode("blourenco");
+  auto player = Player{ "blourenco", TeamColor::Blue };
 
-  // player.start();
-
-  ros::spin();
+  ROS_INFO("Player %s of team %i", player.name().c_str(), (int)player.team());
 
   return 0;
 }
