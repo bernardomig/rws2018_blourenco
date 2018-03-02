@@ -15,6 +15,8 @@ void PlayerNode::start()
 
   publishPosition();
   _make_a_move_sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 10, &PlayerNode::makeAPlay, this);
+
+  _marker_pub = _nh.advertise<visualization_msgs::Marker>("/bocas", 1);
 }
 
 void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
@@ -31,11 +33,34 @@ void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
   _position *= delta;
 
   publishPosition();
+  publishMarker();
 }
 
 void PlayerNode::publishPosition()
 {
   _br.sendTransform(tf::StampedTransform{ _position, ros::Time::now(), "world", _name });
+}
+
+void PlayerNode::publishMarker()
+{
+  auto marker = visualization_msgs::Marker{};
+
+  marker.header.frame_id = _name;
+  marker.header.stamp = ros::Time();
+  marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+  marker.action = visualization_msgs::Marker::ADD;
+
+  marker.scale.x = 1;
+  marker.scale.y = 1;
+  marker.scale.z = 1;
+  marker.color.a = 1.0;
+  marker.color.r = 1.0;
+  marker.color.g = 0.0;
+  marker.color.b = 1.0;
+
+  marker.text = "Hallo";
+
+  _marker_pub.publish(marker);
 }
 
 float PlayerNode::randomPosition()
