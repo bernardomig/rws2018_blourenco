@@ -2,6 +2,15 @@
 
 PlayerNode::PlayerNode(std::string name) : _name(name)
 {
+  // get team members
+  _nh.getParam("/team_blue", _teams.blue);
+  _nh.getParam("/team_red", _teams.red);
+  _nh.getParam("/team_green", _teams.green);
+
+  auto blue_team =
+      std::accumulate(_teams.blue.begin(), _teams.blue.end(), ""s, [](auto a, auto b) { return a + " " + b; });
+
+  ROS_INFO("blue_team: %s", blue_team.c_str());
 }
 
 void PlayerNode::start()
@@ -25,7 +34,7 @@ void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
 
   auto delta = tf::Transform{};
 
-  delta.setOrigin(tf::Vector3{ 0.1, 0, 0 });
+  delta.setOrigin(tf::Vector3{ max_speed, 0, 0 });
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, 0.1);
   delta.setRotation(q);
@@ -50,9 +59,9 @@ void PlayerNode::publishMarker()
   marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
   marker.action = visualization_msgs::Marker::ADD;
 
-  marker.scale.x = 1;
-  marker.scale.y = 1;
-  marker.scale.z = 1;
+  marker.scale.x = 0.5;
+  marker.scale.y = 0.5;
+  marker.scale.z = 0.5;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 0.0;

@@ -1,8 +1,11 @@
 #ifndef _PLAYER_NODE_HPP
 #define _PLAYER_NODE_HPP
 
+#include <algorithm>
 #include <chrono>
 #include <random>
+
+using namespace std::literals;
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
@@ -33,6 +36,10 @@ private:
   tf::TransformBroadcaster _br;
   ros::Subscriber _make_a_move_sub;
   tf::Transform _position;
+  struct
+  {
+    std::vector<std::string> red, green, blue;
+  } _teams;
 };
 
 #endif
