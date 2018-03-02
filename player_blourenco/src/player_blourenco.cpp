@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     auto transform = tf::Transform{};
     transform.setOrigin(tf::Vector3{ 4 * std::cos(a), 2 * std::sin(a), 0 });
     auto q = tf::Quaternion{};
-    q.setRPY(0, 0, M_PI / 2);
+    q.setRPY(0, 0, a);
     transform.setRotation(q);
     br.sendTransform(tf::StampedTransform{ transform, ros::Time::now(), "world", "blourenco" });
     rate.sleep();
