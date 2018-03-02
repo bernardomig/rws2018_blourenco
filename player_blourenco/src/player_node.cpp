@@ -10,6 +10,7 @@ PlayerNode::PlayerNode(std::string name) : _name(name)
 
 void PlayerNode::start()
 {
+  static tf::TransformListener _listener;
   float x = randomPosition();
   float y = randomPosition();
   _position.setOrigin(tf::Vector3{ x, y, 0 });
@@ -26,13 +27,18 @@ void PlayerNode::start()
 void PlayerNode::updatePosition()
 {
   auto t = tf::StampedTransform{};
-  findOtherPlayer("lsarmento", t);
+  if (!findOtherPlayer("fcosta", t))
+  {
+    return;
+  }
+
+  auto angle = std::atan2(t.getOrigin().y(), t.getOrigin().x());
 
   auto delta = tf::Transform{};
 
   delta.setOrigin(tf::Vector3{ max_speed, 0, 0 });
   auto q = tf::Quaternion{};
-  q.setRPY(0, 0, 0.1);
+  q.setRPY(0, 0, angle / 10);
   delta.setRotation(q);
 
   _position *= delta;
@@ -44,10 +50,11 @@ bool PlayerNode::findOtherPlayer(std::string player_name, tf::StampedTransform& 
 
   try
   {
+    // _listener.waitForTransform(player_name, _name, ros::Time(0), ros::Duration(10));
     _listener.lookupTransform(player_name, _name, ros::Time(0), transform);
     return true;
   }
-  catch (tf::LookupException& ex)
+  catch (tf::TransformException& ex)
   {
     ROS_ERROR("didn't found %s: %s", player_name.c_str(), ex.what());
     return false;
