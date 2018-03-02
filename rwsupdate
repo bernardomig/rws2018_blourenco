@@ -30,14 +30,14 @@ do
     then
         git clone $repository &> /dev/null
         if [[ $? == 0 ]]
-        then printf "."
-        else echo "!"
+        then printf "?"
+        else printf "!"
         fi
     else
         (cd $repdir; git pull) &> /dev/null
         if [[ $? == 0 ]]
         then printf "#"
-        else echo "!"
+        else printf "!"
         fi
     fi &
 done
