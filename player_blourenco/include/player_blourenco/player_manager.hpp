@@ -12,9 +12,9 @@ typedef std::vector<std::reference_wrapper<Player>> Team;
 class PlayerManager
 {
 public:
-  PlayerManager(ros::NodeHandle& nh);
+  PlayerManager(ros::NodeHandle& nh, std::vector<std::pair<TeamColor, std::string>> teams);
 
-  const std::vector<Player> players() const;
+  Team players();
   Player& findPlayerWithName(std::string) throw(std::exception);
   const Team& teamOf(TeamColor) const;
   const Team& teamOf(Player&) const;
@@ -23,9 +23,8 @@ public:
   const Team& preysOf(TeamColor) const;
   const Team& preysOf(Player&) const;
 
-  void loadPlayers(std::vector<std::pair<TeamColor, std::string>>&);
-
 protected:
+  void loadPlayers(std::vector<std::pair<TeamColor, std::string>>&);
   void loadPlayersFromTeam(TeamColor team, std::string team_str);
   void assignPlayersToTeam();
 

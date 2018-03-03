@@ -1,51 +1,62 @@
 #ifndef _PLAYER_NODE_HPP
 #define _PLAYER_NODE_HPP
 
-#include <algorithm>
-#include <map>
-#include <string>
-
 #include <ros/ros.h>
-#include <tf/transform_broadcaster.h>
-#include <tf/transform_listener.h>
+
+#include "player_blourenco/player_manager.hpp"
+#include "player_blourenco/player_updater.hpp"
 
 #include "rws2018_msgs/MakeAPlay.h"
-
-enum class Team : int
-{
-  Red,
-  Green,
-  Blue,
-};
-
 class PlayerNode
 {
 public:
-  PlayerNode(std::string name);
+  PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams);
 
-  void start();
+  void report()
+  {
+    ROS_INFO("I'm %s and my team is %i", _me.name().c_str(), (int)_me.team());
+
+    ROS_INFO("My team is:");
+    for (Player& mate : _team)
+    {
+      ROS_INFO("- %s [%s] [%f]", mate.name().c_str(), (mate.alive() ? "alive" : "dead"), _me.distanceTo(mate));
+    }
+
+    ROS_INFO("My enemies are:");
+    for (Player& enemy : _enemies)
+    {
+      ROS_INFO("- %s [%s] [%f]", enemy.name().c_str(), (enemy.alive() ? "alive" : "dead"), _me.distanceTo(enemy));
+    }
+
+    ROS_INFO("My prays are:");
+    for (Player& prey : _preys)
+    {
+      ROS_INFO("- %s [%s] [%f]", prey.name().c_str(), (prey.alive() ? "alive" : "dead"), _me.distanceTo(prey));
+    }
+  }
 
 protected:
+  void step(const rws2018_msgs::MakeAPlay::ConstPtr&);
+  void step();
+
+  void updatePlayers();
+  void updateMyself();
+
 private:
-  std::string _name;
-
-  std::string _team;
-
-  struct Player
-  {
-    std::string name;
-    Team team;
-  };
-
-  std::vector<Player> _players;
-
   ros::NodeHandle _nh;
+  PlayerManager _manager;
+  PlayerUpdater _updater;
+  ros::Subscriber _sub;
 
-  tf::TransformBroadcaster _tf_bf;
-  tf::TransformListener _tf_lt;
+  std::string _name;
+  Player& _me;
 
-  ros::Subscriber _make_a_move_sub;
-  tf::Transform _transform;
+  float _speed;
+
+  Team _players;
+  Team _team;
+  Team _enemies;
+  Team _preys;
 };
 
 #endif

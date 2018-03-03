@@ -1,12 +1,19 @@
 #include "player_blourenco/player_manager.hpp"
 
-PlayerManager::PlayerManager(ros::NodeHandle& nh) : _nh(nh)
+PlayerManager::PlayerManager(ros::NodeHandle& nh, std::vector<std::pair<TeamColor, std::string>> teams) : _nh(nh)
 {
+  loadPlayers(teams);
 }
 
-const std::vector<Player> PlayerManager::players() const
+Team PlayerManager::players()
 {
-  return _players;
+  Team team;
+
+  for (Player& player : _players)
+  {
+    team.push_back(player);
+  }
+  return team;
 }
 
 Player& PlayerManager::findPlayerWithName(std::string name) throw(std::exception)

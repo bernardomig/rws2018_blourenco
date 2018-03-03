@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <tf/LinearMath/Transform.h>
+
 #include "player_blourenco/team_color.hpp"
 
 class Player
@@ -12,10 +14,18 @@ public:
 
   const std::string& name() const;
   const TeamColor& team() const;
+  bool alive() const;
+  void alive(bool);
+
+  tf::Transform& transform();
+  void spawn();
+  float distanceTo(Player&);
 
 private:
+  tf::Transform _transform;
   std::string _name;
   TeamColor _team;
+  bool _alive;
 };
 
 #endif

@@ -141,6 +141,7 @@ add_executable(player_blourenco_node
   src/player_node.cpp
 
   src/player_manager.cpp
+  src/player_updater.cpp
   
   src/team_color.cpp
   src/player.cpp

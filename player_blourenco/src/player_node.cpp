@@ -1,65 +1,44 @@
 #include "player_blourenco/player_node.hpp"
 
-static const std::string team_to_s(Team team)
+PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams)
+  : _name(name)
+  , _manager(_nh, teams)
+  , _me(_manager.findPlayerWithName(name))
+  , _players(_manager.players())
+  , _team(_manager.teamOf(_me))
+  , _enemies(_manager.enemiesOf(_me))
+  , _preys(_manager.preysOf(_me))
+
 {
-  switch (team)
+  _sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 2, &PlayerNode::step, this);
+
+  _me.spawn();
+}
+
+void PlayerNode::step(const rws2018_msgs::MakeAPlay::ConstPtr& msg)
+{
+  _speed = msg->cheetah;
+  step();
+}
+
+void PlayerNode::step()
+{
+  updatePlayers();
+
+  report();
+
+  updateMyself();
+}
+
+void PlayerNode::updatePlayers()
+{
+  for (Player& player : _players)
   {
-    case Team::Blue:
-      return "blue";
-    case Team::Red:
-      return "red";
-    case Team::Green:
-      return "green";
+    _updater.pullPosition(player);
   }
 }
 
-PlayerNode::PlayerNode(std::string name) : _name(name)
+void PlayerNode::updateMyself()
 {
-  // clang-format off
-  auto team_mapping = {
-    std::make_pair("/team_blue", Team::Blue),std::make_pair("/team_red", Team::Red),
-    std::make_pair("/team_green", Team::Green),
-  };
-  // clang-format on
-
-  for (auto& team : team_mapping)
-  {
-    std::vector<std::string> players_in_team;
-    _nh.getParam(std::get<0>(team), players_in_team);
-    for (auto& player : players_in_team)
-    {
-      _players.push_back(Player{ player, std::get<1>(team) });
-    }
-  }
-
-  std::array<std::vector<std::reference_wrapper<Player>>, 3> teams;
-
-  for (auto team : { Team::Red, Team::Blue, Team::Green })
-  {
-    std::copy_if(_players.begin(), _players.end(), std::back_inserter(teams[(int)team]),
-                 [=](const Player& player) { return player.team == team; });
-  }
-
-  auto print_team = [&]() {
-    for (auto& els : teams)
-    {
-      auto team_s = std::accumulate(els.begin(), els.end(), std::string(""),
-                                    [](auto& rep, auto& el) { return rep + " " + el.get().name; });
-
-      ROS_INFO("team %s {%s }", team_to_s(els[0].get().team).c_str(), team_s.c_str());
-    }
-  };
-
-  print_team();
-
-  for (auto& player : _players)
-  {
-    player.name += "[" + team_to_s(player.team) + "]";
-  }
-
-  print_team();
-}
-
-void PlayerNode::start()
-{
+  _updater.pushPosition(_me);
 }
