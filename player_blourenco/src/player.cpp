@@ -13,8 +13,3 @@ const TeamColor& Player::team() const
 {
   return _team;
 }
-
-bool Player::sameTeamAs(const Player& other)
-{
-  return other.team() == team();
-}

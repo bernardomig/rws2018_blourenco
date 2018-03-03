@@ -13,8 +13,6 @@ public:
   const std::string& name() const;
   const TeamColor& team() const;
 
-  bool sameTeamAs(const Player&);
-
 private:
   std::string _name;
   TeamColor _team;

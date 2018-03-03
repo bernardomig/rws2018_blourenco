@@ -9,14 +9,63 @@ const std::vector<Player> PlayerManager::players() const
   return _players;
 }
 
-const Team& PlayerManager::playersOf(TeamColor team) const
+Player& PlayerManager::findPlayerWithName(std::string name) throw(std::exception)
+{
+  auto player = std::find_if(_players.begin(), _players.end(), [&](auto& p) { return p.name() == name; });
+  if (player == _players.end())
+  {
+    throw std::runtime_error("player not found");
+  }
+  else
+  {
+    return *player;
+  }
+}
+
+const Team& PlayerManager::teamOf(TeamColor team) const
 {
   return _teams.at(team);
 }
 
 const Team& PlayerManager::teamOf(Player& player) const
 {
-  return playersOf(player.team());
+  return teamOf(player.team());
+}
+
+const Team& PlayerManager::enemiesOf(TeamColor team) const
+{
+  switch (team)
+  {
+    case TeamColor::Red:
+      return teamOf(TeamColor::Green);
+    case TeamColor::Green:
+      return teamOf(TeamColor::Blue);
+    case TeamColor::Blue:
+      return teamOf(TeamColor::Red);
+  }
+}
+
+const Team& PlayerManager::enemiesOf(Player& player) const
+{
+  return enemiesOf(player.team());
+}
+
+const Team& PlayerManager::preysOf(TeamColor team) const
+{
+  switch (team)
+  {
+    case TeamColor::Red:
+      return teamOf(TeamColor::Blue);
+    case TeamColor::Green:
+      return teamOf(TeamColor::Red);
+    case TeamColor::Blue:
+      return teamOf(TeamColor::Green);
+  }
+}
+
+const Team& PlayerManager::preysOf(Player& player) const
+{
+  return preysOf(player.team());
 }
 
 void PlayerManager::loadPlayers(std::vector<std::pair<TeamColor, std::string>>& teams)

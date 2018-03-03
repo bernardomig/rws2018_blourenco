@@ -15,8 +15,13 @@ public:
   PlayerManager(ros::NodeHandle& nh);
 
   const std::vector<Player> players() const;
-  const Team& playersOf(TeamColor team) const;
+  Player& findPlayerWithName(std::string) throw(std::exception);
+  const Team& teamOf(TeamColor) const;
   const Team& teamOf(Player&) const;
+  const Team& enemiesOf(TeamColor) const;
+  const Team& enemiesOf(Player&) const;
+  const Team& preysOf(TeamColor) const;
+  const Team& preysOf(Player&) const;
 
   void loadPlayers(std::vector<std::pair<TeamColor, std::string>>&);
 

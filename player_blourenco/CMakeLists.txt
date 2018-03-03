@@ -138,9 +138,10 @@ include_directories(
 add_executable(player_blourenco_node
   src/player_blourenco.cpp
 
-  src/player_manager.cpp
-
   src/player_node.cpp
+
+  src/player_manager.cpp
+  
   src/team_color.cpp
   src/player.cpp
 )
