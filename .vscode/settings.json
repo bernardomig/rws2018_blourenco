@@ -36,6 +36,12 @@
         "utility": "cpp",
         "optional": "cpp",
         "random": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "csignal": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "future": "cpp",
+        "memory": "cpp",
+        "thread": "cpp"
     }
 }

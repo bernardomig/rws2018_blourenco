@@ -1,6 +1,7 @@
 #include "player_blourenco/player_node.hpp"
 
 PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams)
+    // clang-format off
   : _name(name)
   , _manager(_nh, teams)
   , _me(_manager.findPlayerWithName(name))
@@ -8,7 +9,8 @@ PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::s
   , _team(_manager.teamOf(_me))
   , _enemies(_manager.enemiesOf(_me))
   , _preys(_manager.preysOf(_me))
-
+  , _game_srv(_nh.advertiseService("/game_query", &PlayerNode::respondToGameQuery, this))
+// clang-format on
 {
   _sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 2, &PlayerNode::step, this);
 
@@ -16,7 +18,14 @@ PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::s
   updateMyself();
 }
 
-void PlayerNode::step(const rws2018_msgs::MakeAPlay::ConstPtr& msg)
+bool PlayerNode::respondToGameQuery(rws2018_msgs::GameQuery::Request &req, rws2018_msgs::GameQuery::Response &res)
+{
+  res.resposta = "nao percebo nada disto";
+
+  return true;
+}
+
+void PlayerNode::step(const rws2018_msgs::MakeAPlay::ConstPtr &msg)
 {
   _speed = msg->cheetah;
 
@@ -81,7 +90,7 @@ void PlayerNode::move()
   }
 }
 
-void PlayerNode::moveTo(Player& target)
+void PlayerNode::moveTo(Player &target)
 {
   float f = _me.angleTo(target);
   float d = _me.sightTo(target) + 0.01;
@@ -90,7 +99,7 @@ void PlayerNode::moveTo(Player& target)
   auto rotation = f * f > _rotation * _rotation ? _rotation * f / fabs(f) : f;
 
   auto t = tf::Transform{};
-  t.setOrigin(tf::Vector3{ speed, 0, 0 });
+  t.setOrigin(tf::Vector3{speed, 0, 0});
 
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, rotation);
@@ -102,7 +111,7 @@ void PlayerNode::moveTo(Player& target)
 void PlayerNode::moveForward()
 {
   auto t = tf::Transform{};
-  t.setOrigin(tf::Vector3{ _speed, 0, 0 });
+  t.setOrigin(tf::Vector3{_speed, 0, 0});
 
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, 0);
@@ -113,7 +122,7 @@ void PlayerNode::moveForward()
 
 void PlayerNode::updatePlayers()
 {
-  for (Player& player : _players)
+  for (Player &player : _players)
   {
     _updater.pullPosition(player);
   }
