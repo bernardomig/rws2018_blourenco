@@ -41,8 +41,12 @@ void PlayerNode::pointcloudCallback(const pcl::PointCloud<pcl::PointXYZRGB>::Con
 
   auto best_match = std::string{ "banana" };
   auto score = 100;
-  for (auto & [ name, vol ] : objects)
+
+  for (auto &obj : objects)
   {
+    auto name = std::get<0>(obj);
+    auto vol = std::get<1>(obj);
+
     if (std::abs(vol - score) < score)
     {
       score = std::abs(vol - score);
