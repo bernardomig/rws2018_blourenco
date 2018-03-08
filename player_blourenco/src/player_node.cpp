@@ -20,7 +20,7 @@ PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::s
 
 bool PlayerNode::respondToGameQuery(rws2018_msgs::GameQuery::Request &req, rws2018_msgs::GameQuery::Response &res)
 {
-  res.resposta = "nao percebo nada disto";
+  res.resposta = "banana";
 
   return true;
 }
