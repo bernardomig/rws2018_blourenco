@@ -19,7 +19,11 @@ public:
 
   tf::Transform& transform();
   void spawn();
+  tf::Transform transformTo(Player&);
+
   float distanceTo(Player&);
+  float sightTo(Player&);
+  float angleTo(Player&);
 
 private:
   tf::Transform _transform;

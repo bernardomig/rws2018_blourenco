@@ -16,7 +16,7 @@ Team PlayerManager::players()
   return team;
 }
 
-Player& PlayerManager::findPlayerWithName(std::string name) throw(std::exception)
+Player& PlayerManager::findPlayerWithName(std::string name)
 {
   auto player = std::find_if(_players.begin(), _players.end(), [&](auto& p) { return p.name() == name; });
   if (player == _players.end())

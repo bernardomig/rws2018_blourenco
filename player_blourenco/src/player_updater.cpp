@@ -6,7 +6,7 @@ void PlayerUpdater::pullPosition(Player& p)
 
   try
   {
-    _listener.lookupTransform(p.name(), "/world", ros::Time(0), transform);
+    _listener.lookupTransform("/world", p.name(), ros::Time(0), transform);
 
     p.alive(true);
 

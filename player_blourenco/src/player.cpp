@@ -31,13 +31,32 @@ tf::Transform& Player::transform()
 
 void Player::spawn()
 {
-  _transform.setRotation(tf::Quaternion{ 0, 0, 0, 1 });
+  auto q = tf::Quaternion{};
+  q.setRPY(0, 0, M_PI_2);
+  _transform.setOrigin(tf::Vector3(3, 3, 0));
+  _transform.setRotation(q);
+}
+
+tf::Transform Player::transformTo(Player& p)
+{
+  return transform().inverse() * p.transform();
 }
 
 float Player::distanceTo(Player& p)
 {
-  auto& pos1 = transform().getOrigin();
-  auto& pos2 = p.transform().getOrigin();
+  return transformTo(p).getOrigin().length();
+}
 
-  return (pos1 - pos2).length();
+float Player::sightTo(Player& p)
+{
+  return transformTo(p).getOrigin().x();
+}
+
+float Player::angleTo(Player& p)
+{
+  auto T = transformTo(p).getOrigin();
+  auto x = T.x();
+  auto y = T.y();
+
+  return atan2(y, x);
 }
