@@ -20,6 +20,7 @@ protected:
 
   void move();
   void moveTo(Player&);
+  void moveForward();
 
   void updatePlayers();
   void updateMyself();

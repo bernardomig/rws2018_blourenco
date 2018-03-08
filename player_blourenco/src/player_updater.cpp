@@ -15,7 +15,6 @@ void PlayerUpdater::pullPosition(Player& p)
   }
   catch (tf::LookupException)
   {
-    p.alive(false);
   }
 }
 
