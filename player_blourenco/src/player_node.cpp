@@ -1,7 +1,7 @@
 #include "player_blourenco/player_node.hpp"
 
 PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams)
-    // clang-format off
+  // clang-format off
   : _name(name)
   , _manager(_nh, teams)
   , _me(_manager.findPlayerWithName(name))
@@ -10,6 +10,7 @@ PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::s
   , _enemies(_manager.enemiesOf(_me))
   , _preys(_manager.preysOf(_me))
   , _game_srv(_nh.advertiseService("/game_query", &PlayerNode::respondToGameQuery, this))
+  , _pc_sub(_nh.subscribe<pcl::PointCloud<pcl::PointXYZRGB>>("/object_point_cloud", 2, &PlayerNode::pointcloudCallback, this))
 // clang-format on
 {
   _sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 2, &PlayerNode::step, this);
@@ -20,9 +21,36 @@ PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::s
 
 bool PlayerNode::respondToGameQuery(rws2018_msgs::GameQuery::Request &req, rws2018_msgs::GameQuery::Response &res)
 {
-  res.resposta = "banana";
-
+  res.resposta = _classification;
   return true;
+}
+
+void PlayerNode::pointcloudCallback(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &pc)
+{
+  const auto objects = std::map<std::string, float>{
+    { "banana", 1.947f },
+    { "onion", 0.216f },
+    { "soda can", 1.32294f },
+    { "tomato", 0.37853 },
+  };
+
+  Eigen::Vector4f min, max;
+  pcl::getMinMax3D(*pc, min, max);
+  Eigen::Vector4f size = max - min;
+  auto volume = size.x() * size.y() * size.z();
+
+  auto best_match = std::string{};
+  auto score = 100;
+  for (auto & [ name, vol ] : objects)
+  {
+    if (std::abs(vol - score) < score)
+    {
+      score = std::abs(vol - score);
+      best_match = name;
+    }
+  }
+
+  _classification = best_match;
 }
 
 void PlayerNode::step(const rws2018_msgs::MakeAPlay::ConstPtr &msg)
@@ -99,7 +127,7 @@ void PlayerNode::moveTo(Player &target)
   auto rotation = f * f > _rotation * _rotation ? _rotation * f / fabs(f) : f;
 
   auto t = tf::Transform{};
-  t.setOrigin(tf::Vector3{speed, 0, 0});
+  t.setOrigin(tf::Vector3{ speed, 0, 0 });
 
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, rotation);
@@ -111,7 +139,7 @@ void PlayerNode::moveTo(Player &target)
 void PlayerNode::moveForward()
 {
   auto t = tf::Transform{};
-  t.setOrigin(tf::Vector3{_speed, 0, 0});
+  t.setOrigin(tf::Vector3{ _speed, 0, 0 });
 
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, 0);

@@ -5,11 +5,18 @@
 
 #include <ros/ros.h>
 
+#include <sensor_msgs/PointCloud2.h>
+
+#include <pcl/common/common.h>
+#include <pcl/point_cloud.h>
+
+#include <pcl_ros/point_cloud.h>
+
 #include "player_blourenco/player_manager.hpp"
 #include "player_blourenco/player_updater.hpp"
 
-#include "rws2018_msgs/MakeAPlay.h"
 #include "rws2018_msgs/GameQuery.h"
+#include "rws2018_msgs/MakeAPlay.h"
 
 class PlayerNode
 {
@@ -18,6 +25,8 @@ public:
 
 protected:
   bool respondToGameQuery(rws2018_msgs::GameQuery::Request &req, rws2018_msgs::GameQuery::Response &res);
+
+  void pointcloudCallback(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &pc);
 
   void step(const rws2018_msgs::MakeAPlay::ConstPtr &);
   void step();
@@ -36,6 +45,9 @@ private:
   ros::Subscriber _sub;
 
   ros::ServiceServer _game_srv;
+  ros::Subscriber _pc_sub;
+
+  std::string _classification;
 
   std::string _name;
   Player &_me;
