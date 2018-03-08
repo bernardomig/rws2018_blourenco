@@ -39,7 +39,7 @@ const Team& PlayerManager::teamOf(Player& player) const
   return teamOf(player.team());
 }
 
-const Team& PlayerManager::enemiesOf(TeamColor team) const
+const Team& PlayerManager::preysOf(TeamColor team) const
 {
   switch (team)
   {
@@ -57,7 +57,7 @@ const Team& PlayerManager::enemiesOf(Player& player) const
   return enemiesOf(player.team());
 }
 
-const Team& PlayerManager::preysOf(TeamColor team) const
+const Team& PlayerManager::enemiesOf(TeamColor team) const
 {
   switch (team)
   {

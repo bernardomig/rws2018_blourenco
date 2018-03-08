@@ -41,7 +41,8 @@ void PlayerNode::move()
   {
     if (it->get().alive())
     {
-      if (auto dist = _me.distanceTo(*it); dist < best_distance)
+      auto dist = _me.distanceTo(*it);
+      if (dist < best_distance)
       {
         closest_prey = it;
         best_distance = dist;
