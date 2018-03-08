@@ -39,7 +39,7 @@ void PlayerNode::pointcloudCallback(const pcl::PointCloud<pcl::PointXYZRGB>::Con
   Eigen::Vector4f size = max - min;
   auto volume = size.x() * size.y() * size.z();
 
-  auto best_match = std::string{};
+  auto best_match = std::string{ "banana" };
   auto score = 100;
   for (auto & [ name, vol ] : objects)
   {
