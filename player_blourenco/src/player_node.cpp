@@ -35,23 +35,21 @@ void PlayerNode::step()
 
 void PlayerNode::move()
 {
-  Player& target = _manager.findPlayerWithName("lsarmento");
-
-  Team::iterator closest_enemy;
+  Team::iterator closest_prey;
   auto best_distance = 100.0f;
-  for (auto it = _enemies.begin(); it != _enemies.end(); ++it)
+  for (auto it = _preys.begin(); it != _preys.end(); ++it)
   {
     if (it->get().alive())
     {
       if (auto dist = _me.distanceTo(*it); dist < best_distance)
       {
-        closest_enemy = it;
+        closest_prey = it;
         best_distance = dist;
       }
     }
   }
 
-  moveTo(target);
+  moveTo(*closest_prey);
 }
 
 void PlayerNode::moveTo(Player& target)
