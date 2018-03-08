@@ -1,6 +1,8 @@
 #ifndef PLAYER_HPP_
 #define PLAYER_HPP_
 
+#include <chrono>
+#include <random>
 #include <string>
 
 #include <tf/LinearMath/Transform.h>

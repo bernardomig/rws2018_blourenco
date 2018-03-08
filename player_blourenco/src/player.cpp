@@ -31,9 +31,20 @@ tf::Transform& Player::transform()
 
 void Player::spawn()
 {
+  auto now = std::chrono::system_clock::now();
+
+  auto seed = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+  auto generator = std::default_random_engine{};
+  generator.seed(seed);
+  auto distribution = std::uniform_real_distribution<float>{ -5, 5 };
+
+  auto x = distribution(generator);
+  auto y = distribution(generator);
+
   auto q = tf::Quaternion{};
   q.setRPY(0, 0, M_PI_2);
-  _transform.setOrigin(tf::Vector3(3, 3, 0));
+  _transform.setOrigin(tf::Vector3(x, y, 0));
   _transform.setRotation(q);
 }
 
