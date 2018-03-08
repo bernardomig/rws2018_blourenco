@@ -1,0 +1,12 @@
+<!-- -->
+<launch>
+    <arg name="delay" default="0"/>
+    <node pkg="player_blourenco" type="player_blourenco_node" name="blourenco" output="screen" respawn="true" respawn_delay="$(arg delay)" />
+    <node pkg="player_jmota" type="player_jmota_node" name="jmota" output="log" respawn="true" respawn_delay="$(arg delay)" />
+    <node pkg="player_lsarmento" type="player_lsarmento_node" name="lsarmento" output="log" respawn="true" respawn_delay="$(arg delay)" />
+    <rosparam command="load" file="$(find rws2018_bringup)/params/default.yaml"/>
+    <node pkg="rws2018_referee" type="referee.py" name="referee"/>
+    <node pkg="rws2018_referee" type="killer.py" name="killer"/>
+    <node pkg="rws2018_referee" type="draw_teams" name="draw_teams"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="--display-config $(find rws2018_bringup)/config/rviz.rviz" required="true"/>
+</launch>

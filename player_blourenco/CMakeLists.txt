@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(player_blourenco)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++1z)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -137,7 +137,15 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(player_blourenco_node
   src/player_blourenco.cpp
-  src/player_node.cpp)
+
+  src/player_node.cpp
+
+  src/player_manager.cpp
+  src/player_updater.cpp
+  
+  src/team_color.cpp
+  src/player.cpp
+)
 
 target_link_libraries(player_blourenco_node
   ${catkin_LIBRARIES}

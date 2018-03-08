@@ -1,59 +1,70 @@
 #ifndef _PLAYER_NODE_HPP
 #define _PLAYER_NODE_HPP
 
-#include <algorithm>
-#include <chrono>
-#include <random>
-
 #include <ros/ros.h>
-#include <tf/transform_broadcaster.h>
-#include <tf/transform_listener.h>
 
-#include <visualization_msgs/Marker.h>
+#include "player_blourenco/player_manager.hpp"
+#include "player_blourenco/player_updater.hpp"
 
 #include "rws2018_msgs/MakeAPlay.h"
-
 class PlayerNode
 {
 public:
-  PlayerNode(std::string name);
+  PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams);
 
-  void start();
+  void report()
+  {
+    // ROS_INFO("I'm %s and my team is %i", _me.name().c_str(), (int)_me.team());
+
+    tf::Vector3 pos = _me.transform().getOrigin();
+
+    ROS_INFO("My position is (%f, %f)", pos.x(), pos.y());
+
+    // ROS_INFO("My team is:");
+    // for (Player& mate : _team)
+    // {
+    //   ROS_INFO("- %s [%s] [%f]", mate.name().c_str(), (mate.alive() ? "alive" : "dead"), _me.distanceTo(mate));
+    // }
+
+    // ROS_INFO("My enemies are:");
+    // for (Player& enemy : _enemies)
+    // {
+    //   ROS_INFO("- %s [%s] [%f]", enemy.name().c_str(), (enemy.alive() ? "alive" : "dead"), _me.distanceTo(enemy));
+    // }
+
+    // ROS_INFO("My prays are:");
+    // for (Player& prey : _preys)
+    // {
+    //   ROS_INFO("- %s [%s] [%f]", prey.name().c_str(), (prey.alive() ? "alive" : "dead"), _me.distanceTo(prey));
+    // }
+  }
 
 protected:
-  void updatePosition();
-  bool findOtherPlayer(std::string, tf::StampedTransform&);
+  void step(const rws2018_msgs::MakeAPlay::ConstPtr&);
+  void step();
 
-  void makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg);
+  void move();
+  void moveTo(Player&);
 
-  void publishPosition();
-  void publishMarker();
-
-  float randomPosition();
+  void updatePlayers();
+  void updateMyself();
 
 private:
-  std::string _name;
   ros::NodeHandle _nh;
-  ros::Publisher _marker_pub;
-  tf::TransformBroadcaster _br;
-  ros::Subscriber _make_a_move_sub;
-  tf::Transform _position;
+  PlayerManager _manager;
+  PlayerUpdater _updater;
+  ros::Subscriber _sub;
 
-  float max_speed;
+  std::string _name;
+  Player& _me;
 
-  // garbage, plz remove
-  struct
-  {
-    std::vector<std::string> red, green, blue;
-  } _teams;
+  float _speed;
+  float _rotation = 0.2;
 
-  std::vector<std::string> piadas_secas = { "O que diz o hidrogenio quando vai para a esquadra?\n- Tenho direito a uma "
-                                            "ligacao?",
-                                            "Os humanos sao seres de habitos,\nespecialmente os monges.",
-                                            "O que e que um tubarao diz para o outro?\n- Tubaralhas-me.",
-                                            "O que e que a galinha foi fazer na igreja?\n-Assistir a Missa do Galo.",
-                                            "Para que servem oculos verdes?\n- Para verde perto." };
-  int piada_id = 0;
+  Team _players;
+  Team _team;
+  Team _enemies;
+  Team _preys;
 };
 
 #endif

@@ -1,109 +1,74 @@
 #include "player_blourenco/player_node.hpp"
 
-PlayerNode::PlayerNode(std::string name) : _name(name)
+PlayerNode::PlayerNode(std::string name, std::vector<std::pair<TeamColor, std::string>> teams)
+  : _name(name)
+  , _manager(_nh, teams)
+  , _me(_manager.findPlayerWithName(name))
+  , _players(_manager.players())
+  , _team(_manager.teamOf(_me))
+  , _enemies(_manager.enemiesOf(_me))
+  , _preys(_manager.preysOf(_me))
+
 {
-  // get team members
-  _nh.getParam("/team_blue", _teams.blue);
-  _nh.getParam("/team_red", _teams.red);
-  _nh.getParam("/team_green", _teams.green);
+  _sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 2, &PlayerNode::step, this);
+
+  _me.spawn();
+  updateMyself();
 }
 
-void PlayerNode::start()
+void PlayerNode::step(const rws2018_msgs::MakeAPlay::ConstPtr& msg)
 {
-  static tf::TransformListener _listener;
-  float x = randomPosition();
-  float y = randomPosition();
-  _position.setOrigin(tf::Vector3{ x, y, 0 });
+  _speed = msg->cheetah;
+  step();
+}
+
+void PlayerNode::step()
+{
+  updatePlayers();
+
+  move();
+
+  report();
+
+  updateMyself();
+}
+
+#include <cmath>
+
+void PlayerNode::move()
+{
+  Player& target = _manager.findPlayerWithName("lsarmento");
+
+  moveTo(target);
+}
+
+void PlayerNode::moveTo(Player& target)
+{
+  float f = _me.angleTo(target);
+  float d = _me.sightTo(target) + 0.01;
+
+  auto speed = d > _speed ? _speed : d;
+  auto rotation = f * f > _rotation * _rotation ? _rotation * f / fabs(f) : f;
+
+  auto t = tf::Transform{};
+  t.setOrigin(tf::Vector3{ speed, 0, 0 });
+
   auto q = tf::Quaternion{};
-  q.setRPY(0, 0, 0);
-  _position.setRotation(q);
+  q.setRPY(0, 0, rotation);
+  t.setRotation(q);
 
-  publishPosition();
-  _make_a_move_sub = _nh.subscribe<rws2018_msgs::MakeAPlay>("/make_a_play", 10, &PlayerNode::makeAPlay, this);
-
-  _marker_pub = _nh.advertise<visualization_msgs::Marker>("/bocas", 1);
+  _me.transform() *= t;
 }
 
-void PlayerNode::updatePosition()
+void PlayerNode::updatePlayers()
 {
-  auto t = tf::StampedTransform{};
-  if (!findOtherPlayer("rsilva", t))
+  for (Player& player : _players)
   {
-    return;
-  }
-
-  auto angle = std::atan2(t.getOrigin().y(), t.getOrigin().x());
-
-  auto delta = tf::Transform{};
-
-  delta.setOrigin(tf::Vector3{ max_speed, 0, 0 });
-  auto q = tf::Quaternion{};
-  q.setRPY(0, 0, angle / 10);
-  delta.setRotation(q);
-
-  _position *= delta;
-}
-
-bool PlayerNode::findOtherPlayer(std::string player_name, tf::StampedTransform& transform)
-{
-  static tf::TransformListener _listener;
-
-  try
-  {
-    // _listener.waitForTransform(player_name, _name, ros::Time(0), ros::Duration(10));
-    _listener.lookupTransform(player_name, _name, ros::Time(0), transform);
-    return true;
-  }
-  catch (tf::TransformException& ex)
-  {
-    ROS_ERROR("didn't found %s: %s", player_name.c_str(), ex.what());
-    return false;
+    _updater.pullPosition(player);
   }
 }
 
-void PlayerNode::makeAPlay(const rws2018_msgs::MakeAPlayConstPtr& msg)
+void PlayerNode::updateMyself()
 {
-  max_speed = msg->cheetah;
-
-  updatePosition();
-
-  publishPosition();
-  publishMarker();
-}
-
-void PlayerNode::publishPosition()
-{
-  _br.sendTransform(tf::StampedTransform{ _position, ros::Time::now(), "world", _name });
-}
-
-void PlayerNode::publishMarker()
-{
-  auto marker = visualization_msgs::Marker{};
-
-  marker.header.frame_id = _name;
-  marker.header.stamp = ros::Time();
-  marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-  marker.action = visualization_msgs::Marker::ADD;
-
-  marker.scale.z = 0.3;
-  marker.color.a = 1.0;
-  marker.color.r = 1.0;
-  marker.color.g = 0.0;
-  marker.color.b = 1.0;
-
-  //   marker.text = piadas_secas[(piada_id++ / 50) % piadas_secas.size()];
-  marker.text = "here I go";
-
-  _marker_pub.publish(marker);
-}
-
-float PlayerNode::randomPosition()
-{
-  auto now = std::chrono::system_clock::now();
-  auto seed = now.time_since_epoch() / std::chrono::microseconds(1);
-
-  auto generator = std::default_random_engine{ seed };
-  auto distribution = std::uniform_real_distribution<float>{ -5.0f, 5.0f };
-
-  return distribution(generator);
+  _updater.pushPosition(_me);
 }
